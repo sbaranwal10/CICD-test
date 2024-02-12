@@ -50,7 +50,7 @@ def perform_code_review(get_file_name_flag=False):
         file_content = file_response.text
         file_contents[file['filename']] = file_content
 
-     print(file_contents)
+    print(file_contents)
 
 def send_to_api(sql_queries, api_endpoint):
     try:
