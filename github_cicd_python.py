@@ -1,6 +1,16 @@
-import os
+import sys
+from datetime import timedelta, datetime
+import json
 import re
 import requests
+import getopt
+import urllib3
+import os
+import time
+import html
+from jira import JIRA
+from bs4 import BeautifulSoup
+import markdown
 
 def extract_sql_queries(file_path):
     try:
@@ -42,6 +52,7 @@ def post_comment_on_pr(comment, pr_number, github_token, repo_owner, repo_name):
 if __name__ == "__main__":
     # Get the path of the changed file from GitHub Actions context
     pr_file_path = os.getenv("GITHUB_WORKSPACE") + os.getenv("GITHUB_EVENT_PATH")
+    print(pr_file_path)
 
     # Get other details from GitHub Secrets
     api_endpoint = os.getenv("API_ENDPOINT_SECRET")
@@ -56,6 +67,7 @@ if __name__ == "__main__":
 
     # Extract SQL queries
     sql_queries = extract_sql_queries(pr_file_path)
+    print(sql_queries)
 
     # Send SQL queries to API
     api_response = send_to_api(sql_queries, api_endpoint)
