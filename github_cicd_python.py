@@ -43,7 +43,9 @@ def perform_code_review(get_file_name_flag=False):
     }
     url = f'https://api.github.com/repos/{repo_name}/pulls/{pr_number}/files'
     response = requests.get(url, headers=headers)
+    print(response)
     files = response.json()
+    print(files)
     changed_files = [file['filename'] for file in files]
     if get_file_name_flag == True:
         return changed_files
