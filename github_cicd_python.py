@@ -18,24 +18,13 @@ repo_name = os.getenv("GITHUB_REPOSITORY")
 access_token = os.getenv("GITHUB_TOKEN")
 pr_url = os.getenv("PR_URL")
 
-def extract_sql_queries(file_path):
-    try:
-        with open(file_path, 'r') as file:
-            content = file.read()
+def extract_sql_statements(content):
+    # Split content into lines and filter lines containing SQL keywords
+    sql_lines = [line.strip() for line in content.split('\n') if any(keyword in line.upper() for keyword in ['SELECT', 'INSERT', 'UPDATE', 'DELETE', 'CREATE', 'ALTER'])]
 
-        # Use a simple regular expression to match SQL statement
-        sql_pattern = re.compile(r'\b(SELECT|UPDATE|INSERT|DELETE|CREATE|ALTER|DROP)\b', re.IGNORECASE)
-        sql_queries = sql_pattern.findall(content)
+    return sql_lines
 
-        return sql_queries
-    except FileNotFoundError:
-        print(f"File not found: {file_path}")
-        return []
-    except Exception as e:
-        print(f"Error extracting SQL queries: {e}")
-        return []
-
-def perform_code_review(get_file_name_flag=False):
+def get_raw_file_content(get_file_name_flag=False):
     # Get the changed file paths from the pull request event payload
     headers = {
         'Authorization': f'Bearer {access_token}',
@@ -43,25 +32,20 @@ def perform_code_review(get_file_name_flag=False):
     }
     url = f'https://api.github.com/repos/{repo_name}/pulls/{pr_number}/files'
     response = requests.get(url, headers=headers)
-    print(response)
     files = response.json()
-    print(files)
     changed_files = [file['filename'] for file in files]
     if get_file_name_flag == True:
         return changed_files
-    print(changed_files)
 
     file_contents = {}
     for file in files:
         file_url = file['raw_url']
-        print(file_url)
         file_response = requests.get(file_url, headers=headers)
-        print(file_response)
         file_content = file_response.text
-        print(file_content)
         file_contents[file['filename']] = file_content
 
     print(file_contents)
+    return file_contents
 
 def send_to_api(sql_queries, api_endpoint):
     try:
@@ -84,27 +68,20 @@ def post_comment_on_pr(comment, pr_number, github_token, repo_owner, repo_name):
         return {"status": 500, "error": f"Error posting comment: {e}"}
 
 if __name__ == "__main__":
-    # Get the path of the changed file from GitHub Actions context
-    pr_file_path = os.getenv("GITHUB_WORKSPACE") + os.getenv("GITHUB_EVENT_PATH")
-    print(pr_file_path)
-    perform_code_review()
+    content=get_raw_file_content()
     # Get other details from GitHub Secrets
-    api_endpoint = os.getenv("API_ENDPOINT_SECRET")
-    repo_owner = os.getenv("REPO_OWNER_SECRET")
-    repo_name = os.getenv("REPO_NAME_SECRET")
-    github_token = os.getenv("GITHUB_TOKEN_SECRET")
-
-    # Get PR number dynamically from GitHub Actions context
-    with open(os.getenv("GITHUB_EVENT_PATH"), 'r') as event_file:
-        event_data = json.load(event_file)
-        pr_number = event_data["number"]
+    api_endpoint = os.getenv("API_ENDPOINT")
+    repo_owner = os.getenv("REPO_OWNER")
+    repo_name = os.getenv("GITHUB_REPOSITORY")
+    github_token = os.getenv("GITHUB_TOKEN")
 
     # Extract SQL queries
-    sql_queries = extract_sql_queries(pr_file_path)
-    print(sql_queries)
+    for filename, content in content_dict.items():
+        sql_statements = extract_sql_statements(content)
+    print(sql_statements)
 
     # Send SQL queries to API
-    api_response = send_to_api(sql_queries, api_endpoint)
+    api_response = send_to_api(sql_statements, api_endpoint)
 
     # Post comment on PR
     if api_response.get("status") == 200:
