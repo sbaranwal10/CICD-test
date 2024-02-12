@@ -7,7 +7,7 @@ def extract_sql_queries(file_path):
         with open(file_path, 'r') as file:
             content = file.read()
 
-        # Use a simple regular expression to match SQL statements
+        # Use a simple regular expression to match SQL statement
         sql_pattern = re.compile(r'\b(SELECT|UPDATE|INSERT|DELETE|CREATE|ALTER|DROP)\b', re.IGNORECASE)
         sql_queries = sql_pattern.findall(content)
 
