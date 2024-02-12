@@ -10,16 +10,21 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout Repository
+    - name: Checkout code
       uses: actions/checkout@v2
 
     - name: Set up Python
       uses: actions/setup-python@v2
       with:
-        python-version: 3.8
+          python-version: 3.8
 
-    - name: Run Python Script
-      run: python github_cicd_python.py
+    - name: Install dependencies
+      run: pip install requests jira bs4 Markdown
+
+    - name: Run unravel github client script
+      run: |
+        python unravel_github_client.py
+
       env:
         PR_NUMBER: ${{ github.event.pull_request.number }}
         GITHUB_REPOSITORY: ${{ github.repository }}
