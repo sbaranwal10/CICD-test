@@ -76,7 +76,7 @@ if __name__ == "__main__":
     github_token = os.getenv("GITHUB_TOKEN")
 
     # Extract SQL queries
-    for filename, content in content_dict.items():
+    for filename, content in content.items():
         sql_statements = extract_sql_statements(content)
     print(sql_statements)
 
