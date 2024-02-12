@@ -29,6 +29,29 @@ def extract_sql_queries(file_path):
         print(f"Error extracting SQL queries: {e}")
         return []
 
+def perform_code_review(get_file_name_flag=False):
+    # Get the changed file paths from the pull request event payload
+    headers = {
+        'Authorization': f'Bearer {access_token}',
+        'Accept': 'application/vnd.github.v3+json'
+    }
+    url = f'https://api.github.com/repos/{repo_name}/pulls/{pr_number}/files'
+    response = requests.get(url, headers=headers)
+    files = response.json()
+    changed_files = [file['filename'] for file in files]
+    if get_file_name_flag == True:
+        return changed_files
+    print(changed_files)
+
+    file_contents = {}
+    for file in files:
+        file_url = file['raw_url']
+        file_response = requests.get(file_url)
+        file_content = file_response.text
+        file_contents[file['filename']] = file_content
+
+     print(file_contents)
+
 def send_to_api(sql_queries, api_endpoint):
     try:
         data = {"sql_queries": sql_queries}
@@ -53,7 +76,7 @@ if __name__ == "__main__":
     # Get the path of the changed file from GitHub Actions context
     pr_file_path = os.getenv("GITHUB_WORKSPACE") + os.getenv("GITHUB_EVENT_PATH")
     print(pr_file_path)
-
+    perform_code_review()
     # Get other details from GitHub Secrets
     api_endpoint = os.getenv("API_ENDPOINT_SECRET")
     repo_owner = os.getenv("REPO_OWNER_SECRET")
