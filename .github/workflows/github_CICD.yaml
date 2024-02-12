@@ -1,0 +1,28 @@
+name: CI/CD Pipeline
+
+on:
+  pull_request:
+    types:
+      - opened
+
+jobs:
+  run_ci_cd:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v2
+
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: 3.8
+
+    - name: Run Python Script
+      run: python github_cicd_python.py
+      env:
+        PR_NUMBER: ${{ github.event.pull_request.number }}
+        GITHUB_REPOSITORY: ${{ github.repository }}
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        REPO_OWNER: ${{ github.repository_owner }}
+        API_ENDPOINT: ${{ secrets.API_ENDPOINT }}
