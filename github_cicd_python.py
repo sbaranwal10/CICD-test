@@ -12,6 +12,12 @@ from jira import JIRA
 from bs4 import BeautifulSoup
 import markdown
 
+pr_number = os.getenv("PR_NUMBER")
+repo_name = os.getenv("GITHUB_REPOSITORY")
+# access_token = os.getenv("GITHUB_TOKEN")
+access_token = os.getenv("GITHUB_TOKEN")
+pr_url = os.getenv("PR_URL")
+
 def extract_sql_queries(file_path):
     try:
         with open(file_path, 'r') as file:
