@@ -54,8 +54,11 @@ def perform_code_review(get_file_name_flag=False):
     file_contents = {}
     for file in files:
         file_url = file['raw_url']
+        print(file_url)
         file_response = requests.get(file_url)
+        print(file_response)
         file_content = file_response.text
+        print(file_content)
         file_contents[file['filename']] = file_content
 
     print(file_contents)
