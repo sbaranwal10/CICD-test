@@ -11,6 +11,7 @@ import html
 from jira import JIRA
 from bs4 import BeautifulSoup
 import markdown
+import subprocess
 
 pr_number = os.getenv("PR_NUMBER")
 repo_name = os.getenv("GITHUB_REPOSITORY")
@@ -57,6 +58,26 @@ def send_to_api(sql_queries, api_endpoint):
     except Exception as e:
         return {"status": 500, "error": f"Error sending to API: {e}"}
 
+def send_to_api_with_curl(sql_queries, api_endpoint):
+    try:
+        data = {"sql_queries": sql_queries}
+        data_json = json.dumps(data).replace('"', r'\"')  # Escape double quotes for curl
+
+        # Construct the curl command
+        curl_command = f'curl -X POST -H "Content-Type: application/json" -d "{data_json}" {api_endpoint}'
+
+        # Execute the curl command using subprocess
+        result = subprocess.check_output(curl_command, shell=True)
+
+        # Parse the result as JSON
+        result_json = json.loads(result.decode('utf-8'))
+
+        return result_json
+
+    except Exception as e:
+        print(f"Error sending to API: {e}")
+        return None
+
 def post_comment_on_pr(comment, pr_number, github_token, repo_owner, repo_name):
     try:
         url = f"https://api.github.com/repos/{repo_owner}/{repo_name}/issues/{pr_number}/comments"
@@ -84,6 +105,9 @@ if __name__ == "__main__":
 
     sql_statements = ["Select * from employee", "Alter Table Employee", "Insert Into Employee(1, 2, 3)"]
     print(sql_statements)
+    api_endpoint = "http://127.0.0.1:5000/execute_sql"
+    result = send_to_api_with_curl(sql_queries, api_endpoint)
+    print(result)
     
     # Send SQL queries to API
     api_response = send_to_api(sql_statements, api_endpoint)
