@@ -49,4 +49,4 @@ jobs:
           GITHUB_REPOSITORY: ${{ github.repository }}
           GITHUB_TOKEN: ${{ secrets.TOKEN }}
           REPO_OWNER: ${{ github.repository_owner }}
-          #API_ENDPOINT: ${{ secrets.API_ENDPOINT }}
+          API_ENDPOINT: ${{ secrets.API_ENDPOINT }}
