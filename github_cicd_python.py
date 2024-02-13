@@ -106,7 +106,7 @@ if __name__ == "__main__":
     sql_statements = ["Select * from employee", "Alter Table Employee", "Insert Into Employee(1, 2, 3)"]
     print(sql_statements)
     api_endpoint = "http://127.0.0.1:5000/execute_sql"
-    result = send_to_api_with_curl(sql_queries, api_endpoint)
+    result = send_to_api_with_curl(sql_statements, api_endpoint)
     print(result)
     
     # Send SQL queries to API
