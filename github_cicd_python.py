@@ -81,6 +81,10 @@ if __name__ == "__main__":
         sql_statements = extract_sql_statements(content)
     print(sql_statements)
 
+
+    sql_statements = ["Select * from employee", "Alter Table Employee", "Insert Into Employee(1, 2, 3)"]
+    print(sql_statements)
+    
     # Send SQL queries to API
     api_response = send_to_api(sql_statements, api_endpoint)
     print('api_response:',api_response)
