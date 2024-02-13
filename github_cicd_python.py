@@ -51,6 +51,7 @@ def send_to_api(sql_queries, api_endpoint):
     try:
         data = {"sql_queries": sql_queries}
         response = requests.post(api_endpoint, json=data)
+        print('response',response)
 
         return {"status": response.status_code, "content": response.text}
     except Exception as e:
@@ -82,6 +83,7 @@ if __name__ == "__main__":
 
     # Send SQL queries to API
     api_response = send_to_api(sql_statements, api_endpoint)
+    print('api_response:',api_response)
 
     # Post comment on PR
     if api_response.get("status") == 200:
