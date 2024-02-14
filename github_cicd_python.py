@@ -22,7 +22,6 @@ pr_url = os.getenv("PR_URL")
 def extract_sql_statements(content):
     sql_queries = []
     current_query = ""
-    print('content:',content)
     if(content):
         in_comment_block = False  
         for line in content:
@@ -84,7 +83,6 @@ def get_raw_file_content(get_file_name_flag=False):
         file_content = file_response.text
         file_contents[file['filename']] = file_content
 
-    print(file_contents)
     return file_contents
 
 def send_to_api(sql_queries, api_endpoint):
@@ -135,16 +133,12 @@ if __name__ == "__main__":
     repo_owner = os.getenv("REPO_OWNER")
     repo_name = os.getenv("GITHUB_REPOSITORY")
     github_token = os.getenv("GITHUB_TOKEN")
-
+    print('content:',content)
     # Extract SQL queries
     for filename, content in content.items():
         sql_statements = extract_sql_statements(content)
     print(sql_statements)
 
-
-    sql_statements = ["Select * from employee", "Alter Table Employee", "Insert Into Employee(1, 2, 3)"]
-    print(sql_statements)
-    api_endpoint = "http://127.0.0.1:5000/execute_sql"
     result = send_to_api_with_curl(sql_statements, api_endpoint)
     print(result)
     
