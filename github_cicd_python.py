@@ -24,7 +24,7 @@ def extract_sql_statements(content):
     current_query = ""
     if(content):
         in_comment_block = False  
-        for line in content:
+        for line in content.split("\n"):
             if not in_comment_block and not line.strip().startswith('--') and not line.strip().startswith('/*'):
                 
                 if 'BEGIN' in line:
@@ -84,48 +84,6 @@ def get_raw_file_content(get_file_name_flag=False):
         #print(file_response)
         file_content = file_response.text
         #print(file_content)
-        sql_queries = []
-        current_query = ""
-        if(file_content):
-            in_comment_block = False  
-            for line in file_content.split("\n"):
-                print(line)
-                if not in_comment_block and not line.strip().startswith('--') and not line.strip().startswith('/*'):
-                    
-                    if 'BEGIN' in line:
-                        in_procedure_block = True
-                        current_query += line.strip() + ' '
-    
-                    elif not line.strip().endswith(';'):
-                        
-                        current_query += line.strip() + ' '
-                    elif 'END' not in line:
-                        
-                        current_query += line.strip()
-                    
-                        
-                    if 'END' in line:
-                        in_procedure_block = False
-                        current_query += line.strip()  
-                        
-                        sql_queries.append(current_query)
-                        
-                        current_query = ""
-                    
-                    elif current_query.endswith(';'):
-                        
-                        sql_queries.append(current_query)
-                        
-                        current_query = ""
-                else:
-                    
-                    if '/*' in line:
-                        in_comment_block = True
-                    
-                    if '*/' in line:
-                        in_comment_block = False
-            file_contents[file['filename']] = file_content
-    print('sql_queries:-',sql_queries)
 
     return file_contents
 
