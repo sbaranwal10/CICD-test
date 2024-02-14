@@ -84,6 +84,7 @@ def get_raw_file_content(get_file_name_flag=False):
         #print(file_response)
         file_content = file_response.text
         #print(file_content)
+        file_contents[file['filename']] = file_content
 
     return file_contents
 
@@ -129,16 +130,17 @@ def post_comment_on_pr(comment, pr_number, github_token, repo_owner, repo_name):
         return {"status": 500, "error": f"Error posting comment: {e}"}
 
 if __name__ == "__main__":
-    content=get_raw_file_content()
+    file_content=get_raw_file_content()
     # Get other details from GitHub Secrets
     api_endpoint = os.getenv("API_ENDPOINT")
     repo_owner = os.getenv("REPO_OWNER")
     repo_name = os.getenv("GITHUB_REPOSITORY")
     github_token = os.getenv("GITHUB_TOKEN")
     # Extract SQL queries
-    for filename, content in content.items():
+    for filename, content in file_content.items():
+        
         sql_statements = extract_sql_statements(content)
-        print(sql_statements)
+    print(sql_statements)
 
     result = send_to_api_with_curl(sql_statements, api_endpoint)
     print(result)
