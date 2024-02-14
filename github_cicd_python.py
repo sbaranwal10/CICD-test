@@ -23,7 +23,8 @@ def extract_sql_statements(content):
     sql_queries = []
     current_query = ""
     if(content):
-        in_comment_block = False  
+        in_comment_block = False
+        in_procedure_block=False 
         for line in content.split("\n"):
             if not in_comment_block and not line.strip().startswith('--') and not line.strip().startswith('/*'):
                 
@@ -47,7 +48,7 @@ def extract_sql_statements(content):
                     
                     current_query = ""
                 
-                elif current_query.endswith(';'):
+                elif current_query.endswith(';') and in_procedure_block==False:
                     
                     sql_queries.append(current_query.strip())
                     
