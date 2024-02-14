@@ -20,10 +20,49 @@ access_token = os.getenv("GITHUB_TOKEN")
 pr_url = os.getenv("PR_URL")
 
 def extract_sql_statements(content):
-    # Split content into lines and filter lines containing SQL keywords
-    sql_lines = [line.strip() for line in content.split('\n') if any(keyword in line.upper() for keyword in ['SELECT', 'INSERT', 'UPDATE', 'DELETE', 'CREATE', 'ALTER'])]
+    sql_queries = []
+    current_query = ""
+    print('content:',content)
+    if(content):
+        in_comment_block = False  
+        for line in content:
+            if not in_comment_block and not line.strip().startswith('--') and not line.strip().startswith('/*'):
+                
+                if 'BEGIN' in line:
+                    in_procedure_block = True
+                    current_query += line.strip() + ' '
 
-    return sql_lines
+                elif not line.strip().endswith(';'):
+                    
+                    current_query += line.strip() + ' '
+                elif 'END' not in line:
+                    
+                    current_query += line.strip()
+                
+                    
+                if 'END' in line:
+                    in_procedure_block = False
+                    current_query += line.strip()  
+                    
+                    sql_queries.append(current_query)
+                    
+                    current_query = ""
+                
+                elif current_query.endswith(';'):
+                    
+                    sql_queries.append(current_query)
+                    
+                    current_query = ""
+            else:
+                
+                if '/*' in line:
+                    in_comment_block = True
+                
+                if '*/' in line:
+                    in_comment_block = False
+
+
+    return sql_queries
 
 def get_raw_file_content(get_file_name_flag=False):
     # Get the changed file paths from the pull request event payload
