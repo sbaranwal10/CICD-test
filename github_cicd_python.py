@@ -86,9 +86,9 @@ def get_raw_file_content(get_file_name_flag=False):
         print(file_content)
         sql_queries = []
         current_query = ""
-        if(content):
+        if(file_content):
             in_comment_block = False  
-            for line in content:
+            for line in file_content:
                 if not in_comment_block and not line.strip().startswith('--') and not line.strip().startswith('/*'):
                     
                     if 'BEGIN' in line:
