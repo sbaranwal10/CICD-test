@@ -135,11 +135,10 @@ if __name__ == "__main__":
     repo_owner = os.getenv("REPO_OWNER")
     repo_name = os.getenv("GITHUB_REPOSITORY")
     github_token = os.getenv("GITHUB_TOKEN")
-    print('content:',content)
     # Extract SQL queries
     for filename, content in content.items():
         sql_statements = extract_sql_statements(content)
-    print(sql_statements)
+        print(sql_statements)
 
     result = send_to_api_with_curl(sql_statements, api_endpoint)
     print(result)
