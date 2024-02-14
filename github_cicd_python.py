@@ -121,10 +121,15 @@ def send_to_api_with_curl(sql_queries, api_endpoint):
 
 def post_comment_on_pr(comment, pr_number, github_token, repo_owner, repo_name):
     try:
-        url = f"https://api.github.com/repos/{repo_owner}/{repo_name}/issues/{pr_number}/comments"
-        headers = {"Authorization": f"Bearer {github_token}"}
-        payload = {"body": comment}
+        url = f"https://api.github.com/repos/{repo_name}/issues/{pr_number}/comments"
+
+        headers = {
+            "Authorization": f"Bearer {access_token}",
+            "Accept": "application/vnd.github.v3+json",
+        }
+        payload = {"body": "{}".format(comment)}
         response = requests.post(url, headers=headers, json=payload)
+        print(response)
 
         return {"status": response.status_code, "content": response.text}
     except Exception as e:
