@@ -43,13 +43,13 @@ def extract_sql_statements(content):
                     in_procedure_block = False
                     current_query += line.strip()  
                     
-                    sql_queries.append(current_query)
+                    sql_queries.append(current_query.strip())
                     
                     current_query = ""
                 
                 elif current_query.endswith(';'):
                     
-                    sql_queries.append(current_query)
+                    sql_queries.append(current_query.strip())
                     
                     current_query = ""
             else:
@@ -141,9 +141,6 @@ if __name__ == "__main__":
         
         sql_statements = extract_sql_statements(content)
     print(sql_statements)
-
-    result = send_to_api_with_curl(sql_statements, api_endpoint)
-    print(result)
     
     # Send SQL queries to API
     api_response = send_to_api(sql_statements, api_endpoint)
