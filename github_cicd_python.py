@@ -88,7 +88,7 @@ def get_raw_file_content(get_file_name_flag=False):
         current_query = ""
         if(file_content):
             in_comment_block = False  
-            for line in file_content:
+            for line in file_content.split("\n"):
                 print(line)
                 if not in_comment_block and not line.strip().startswith('--') and not line.strip().startswith('/*'):
                     
