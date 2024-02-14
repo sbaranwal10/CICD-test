@@ -81,9 +81,9 @@ def get_raw_file_content(get_file_name_flag=False):
         file_url = file['raw_url']
         print(file_url)
         file_response = requests.get(file_url, headers=headers)
-        print(file_response)
+        #print(file_response)
         file_content = file_response.text
-        print(file_content)
+        #print(file_content)
         sql_queries = []
         current_query = ""
         if(file_content):
@@ -124,7 +124,7 @@ def get_raw_file_content(get_file_name_flag=False):
                     if '*/' in line:
                         in_comment_block = False
             file_contents[file['filename']] = file_content
-    print(sql_queries)
+    print('sql_queries:-',sql_queries)
 
     return file_contents
 
