@@ -80,7 +80,6 @@ def get_raw_file_content(get_file_name_flag=False):
     file_contents = {}
     for file in files:
         file_url = file['raw_url']
-        print(file_url)
         file_response = requests.get(file_url, headers=headers)
         #print(file_response)
         file_content = file_response.text
@@ -93,7 +92,6 @@ def send_to_api(sql_queries, api_endpoint):
     try:
         data = {"sql_queries": sql_queries}
         response = requests.post(api_endpoint, json=data)
-        print('response',response)
 
         return {"status": response.status_code, "content": response.text}
     except Exception as e:
@@ -167,11 +165,9 @@ if __name__ == "__main__":
     for filename, content in file_content.items():
         
         sql_statements = extract_sql_statements(content)
-    print(sql_statements)
     
     # Send SQL queries to API
     api_response = send_to_api(sql_statements, api_endpoint)
-    print('api_response:',api_response)
 
     # Post comment on PR
     if api_response.get("status") == 200:
