@@ -120,10 +120,17 @@ def send_to_api_with_curl(sql_queries, api_endpoint):
         return None
 
 def format_comment(query, events):
-    comment = f"**Query:**\n```sql\n{query}\n```\n<details>\n<summary>Events</summary>\n\n"
+    logo_url = 'https://www.unraveldata.com/wp-content/themes/unravel-child/src/images/unLogo.svg'
     
+    comment = f"![Logo]({logo_url})\n\n**Query:**\n```sql\n{query}\n```\n\n<details>\n<summary>Events</summary>\n\n"
+    
+    # Create a table header
+    comment += "| Event | Details |\n"
+    comment += "| --- | --- |\n"
+    
+    # Add events to the table
     for key, value in events.items():
-        comment += f' - **{key}:** {value}\n'
+        comment += f'| **{key}** | {value} |\n'
     
     comment += "</details>"
     return comment
