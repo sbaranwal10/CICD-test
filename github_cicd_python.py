@@ -120,9 +120,12 @@ def send_to_api_with_curl(sql_queries, api_endpoint):
         return None
 
 def format_comment(query, events):
-    comment = f"Query - {query}\nEvents -"
+    comment = f"**Query:**\n```sql\n{query}\n```\n<details>\n<summary>Events</summary>\n\n"
+    
     for key, value in events.items():
-        comment += f'\n"{key}": "{value}"'
+        comment += f' - **{key}:** {value}\n'
+    
+    comment += "</details>"
     return comment
 
 def post_comment_on_pr(api_response, pr_number, github_token, repo_owner, repo_name):
