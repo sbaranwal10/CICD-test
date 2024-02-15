@@ -138,10 +138,9 @@ def post_comment_on_pr(api_response, pr_number, github_token, repo_owner, repo_n
         
         for query, events in content_data.items():
             comment = format_comment(query, events['events'])
-            print(comment)
-        payload = {"body": "{}".format(comment)}
-        response = requests.post(url, headers=headers, json=payload)
-        print(response)
+            payload = {"body": "{}".format(comment)}
+            response = requests.post(url, headers=headers, json=payload)
+        
 
         return {"status": response.status_code, "content": response.text}
     except Exception as e:
