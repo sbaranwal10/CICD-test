@@ -119,7 +119,13 @@ def send_to_api_with_curl(sql_queries, api_endpoint):
         print(f"Error sending to API: {e}")
         return None
 
-def post_comment_on_pr(comment, pr_number, github_token, repo_owner, repo_name):
+def format_comment(query, events):
+    comment = f"Query - {query}\nEvents -"
+    for key, value in events.items():
+        comment += f'\n"{key}": "{value}"'
+    return comment
+
+def post_comment_on_pr(api_response, pr_number, github_token, repo_owner, repo_name):
     try:
         url = f"https://api.github.com/repos/{repo_name}/issues/{pr_number}/comments"
 
@@ -127,6 +133,12 @@ def post_comment_on_pr(comment, pr_number, github_token, repo_owner, repo_name):
             "Authorization": f"Bearer {access_token}",
             "Accept": "application/vnd.github.v3+json",
         }
+        # Parse the JSON-formatted string into a dictionary
+        content_data = json.loads(api_response.get('content', {}))
+        
+        for query, events in content_data.items():
+            comment = format_comment(query, events['events'])
+            print(comment)
         payload = {"body": "{}".format(comment)}
         response = requests.post(url, headers=headers, json=payload)
         print(response)
@@ -154,9 +166,9 @@ if __name__ == "__main__":
 
     # Post comment on PR
     if api_response.get("status") == 200:
-        comment = f"SQL Queries extraction successful. API Response: {api_response}"
+        print(f"SQL Queries extraction successful. API Response: {api_response}")
     else:
-        comment = f"SQL Queries extraction failed. API Response: {api_response}"
+        print(f"SQL Queries extraction failed. API Response: {api_response}")
 
-    post_response = post_comment_on_pr(comment, pr_number, github_token, repo_owner, repo_name)
+    post_response = post_comment_on_pr(api_response, pr_number, github_token, repo_owner, repo_name)
     print(post_response)
